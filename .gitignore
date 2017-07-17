@@ -103,3 +103,5 @@ ENV/
 #################
 
 frames/
+output/
+.DS_Store
