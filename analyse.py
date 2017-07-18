@@ -14,7 +14,9 @@ if False == os.path.exists(path):
 if len(filenames) == 0:
     sys.exit("no files in /frames")
 
-diffValues = np.zeros(256)
+diffValuesY = np.zeros(256).astype('uint32')
+diffValuesU = np.zeros(256).astype('uint32')
+diffValuesV = np.zeros(256).astype('uint32')
 
 thresh = 50
 lastImgYUV = None
@@ -29,21 +31,21 @@ for i, filename in enumerate(filenames):
     # special case: idx 0, can't compare with previous frame
     if i != 0:
         currImgYUVInt = currImgYUV.astype('int')
-        diff = currImgYUVInt.copy()
-        diff[:479] = currImgYUVInt[:479] - lastImgYUVInt[:479]
+        diff = currImgYUVInt - lastImgYUVInt
         diff = abs(diff)
 
-        #for x in np.nditer(diff):
-         #   diffValues[x] += 1
+        for x in np.nditer(diff[:479]):
+            diffValuesY[x] += 1
 
-        # where diff < thresh, overwrite new pixel with former pixel 
-        currImgYUV[diff<thresh] = lastImgYUV[diff<thresh]
+        for x in np.nditer(diff[480:599]):
+            diffValuesU[x] += 1
 
-        recentImgBGR = cv2.cvtColor(currImgYUV, cv2.COLOR_YUV2BGR_I420)
-        newFilename = './output/' + format(i, '06') + '.png'
-        cv2.imwrite(newFilename, recentImgBGR)
+        for x in np.nditer(diff[600:]):
+            diffValuesV[x] += 1
     
     lastImgYUV = currImgYUV
     lastImgYUVInt = lastImgYUV.astype('int')    
 
-#np.savetxt('diffvalues.txt', diffValues)
+np.savetxt('diffvaluesY.txt', diffValuesY)
+np.savetxt('diffvaluesU.txt', diffValuesU)
+np.savetxt('diffvaluesV.txt', diffValuesV)
