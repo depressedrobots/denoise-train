@@ -19,7 +19,7 @@ if False == os.path.exists(OUTPUT_DIR):
 
 # keep the last image after each iteration to create the diff
 # start with a black image for the first diff
-prevImg = np.zeros((480, 640, 3)).astype('int16')
+prevImg = np.zeros((480, 640, 3)).astype('uint8')
 
 counter = 0
 for filename in filenames:
@@ -31,7 +31,7 @@ for filename in filenames:
     print('processing image ' + str(counter) + ' of ' + str(len(filenames)))
 
     # compute rgb diff
-    currImg = cv2.imread(filepath).astype('int16')
+    currImg = cv2.imread(filepath).astype('uint8')
     diff = (currImg - prevImg)
     
     # write diff to .npy binary file
